@@ -1,0 +1,2 @@
+# solelyTech
+company miniprogram
