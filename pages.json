@@ -1,0 +1,237 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/contactUs/contactUs",
+			"style": {
+				"navigationBarTitleText": "联系我们",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffLogin/staffLogin",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/caseList/caseList",
+			"style": {
+				"navigationBarTitleText": "行业案例",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/caseDetail/caseDetail",
+			"style": {
+				"navigationBarTitleText": "案例详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/newsCenter/newsCenter",
+			"style": {
+				"navigationBarTitleText": "资讯中心",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/newsDetail/newsDetail",
+			"style": {
+				"navigationBarTitleText": "详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/hotjob/hotjob",
+			"style": {
+				"navigationBarTitleText": "热招职位",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/hotjobDetail/hotjobDetail",
+			"style": {
+				"navigationBarTitleText": "职位详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/sendResumes/sendResumes",
+			"style": {
+				"navigationBarTitleText": "投递简历",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/userInfor/userInfor",
+			"style": {
+				"navigationBarTitleText": "我的信息",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/user-myMessages/user-myMessages",
+			"style": {
+				"navigationBarTitleText": "我的留言",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/user-case/user-case",
+			"style": {
+				"navigationBarTitleText": "项目管理",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/user-caseGl/user-caseGl",
+			"style": {
+				"navigationBarTitleText": "项目管理",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/user-caseGlDetail/user-caseGlDetail",
+			"style": {
+				"navigationBarTitleText": "项目详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser/staffUser",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-resume/staffUser-resume",
+			"style": {
+				"navigationBarTitleText": "简历管理",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-resumeDetail/staffUser-resumeDetail",
+			"style": {
+				"navigationBarTitleText": "简历详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-goOut/staffUser-goOut",
+			"style": {
+				"navigationBarTitleText": "外出登记",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-goOutMsg/staffUser-goOutMsg",
+			"style": {
+				"navigationBarTitleText": "外出登记",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-goOutDetail/staffUser-goOutDetail",
+			"style": {
+				"navigationBarTitleText": "详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-goOut-Arrive/staffUser-goOut-Arrive",
+			"style": {
+				"navigationBarTitleText": "",//到达
+				"onReachBottomDistance":100,
+				"navigationStyle":"custom"
+			}
+		},
+		{
+			"path": "pages/staffUser-Extension/staffUser-Extension",
+			"style": {
+				"navigationBarTitleText": "推广客户",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-salary/staffUser-salary",
+			"style": {
+				"navigationBarTitleText": "我的薪资",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-system/staffUser-system",
+			"style": {
+				"navigationBarTitleText": "公司规定",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-systemDetail/staffUser-systemDetail",
+			"style": {
+				"navigationBarTitleText": "公司规定",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-systemDetail/staffUser-systemDetail",
+			"style": {
+				"navigationBarTitleText": "公司规定",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-leave/staffUser-leave",
+			"style": {
+				"navigationBarTitleText": "请假",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-leaveDetail/staffUser-leaveDetail",
+			"style": {
+				"navigationBarTitleText": "请假记录",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/staffUser-leaveAdd/staffUser-leaveAdd",
+			"style": {
+				"navigationBarTitleText": "请假记录",
+				"onReachBottomDistance":100
+			}
+		}
+		
+    ],
+	"globalStyle": {
+		//"navigationStyle":"custom",
+		"navigationBarTextStyle": "black",//导航栏文字
+		"navigationBarTitleText": "纯粹科技",
+		"navigationBarBackgroundColor": "#FFFFFF"
+	},
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	}
+}
