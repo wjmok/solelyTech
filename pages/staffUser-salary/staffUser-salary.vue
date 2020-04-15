@@ -32,10 +32,7 @@
 			</view>
 			<view class="item flex">
 				<view class="ll">扣除金额</view>
-				<view class="rr flexRowBetween">
-					<view>-560.00</view>
-					<view class="red">查看详情</view>
-				</view>
+				<view class="rr">-560.00</view></view>
 			</view>
 			<view class="item flex">
 				<view class="ll">绩效扣除</view>
