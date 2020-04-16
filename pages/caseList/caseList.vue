@@ -6,7 +6,7 @@
 				<image src="../../static/images/casel-icon.png" style="width: 36rpx;height: 30rpx;margin-right: 10rpx;" mode=""></image>小程序
 			</view>
 			
-			<view class="black-bj" style="top: 82rpx;" v-show="is_show"></view>
+			<view class="black-bj" style="top: 0rpx;" v-show="is_show"></view>
 			<view class="categoryBox" v-show="is_categoryShow">
 				<view class="pdt20 fs14 ftw">类型</view>
 				<view class="typeNav flex fs13 pdt10 borderB1">
@@ -123,7 +123,7 @@
 	.caseList .item .pic{width: 100%;height: 612rpx;}
 	.caseList .item .tit{padding: 20rpx 4%;text-align: center;}
 	
-	.categoryBox{position: fixed;top: 80rpx;left: 0;right: 0;background-color: #fff;padding: 0 2.6%;box-sizing: border-box; z-index: 45;}
+	.categoryBox{position: fixed;top: 0rpx;left: 0;right: 0;background-color: #fff;padding: 0 2.6%;box-sizing: border-box; z-index: 45;border-top: 1px solid #eee;}
 	
 	/* 类型 */
 	.typeNav{flex-wrap: wrap;}

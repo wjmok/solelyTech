@@ -70,7 +70,7 @@
 </script>
 
 <style>
-	page{padding-bottom: 60rpx;background-color: #F5F5F5;}
+	page{background-color: #F5F5F5;}
 	
 	.R-fixIcon{width: 110rpx;height: 110rpx;position: fixed;bottom:30%;right: 30rpx;z-index: 66;}
 	

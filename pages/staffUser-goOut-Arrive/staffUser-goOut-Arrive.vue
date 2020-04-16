@@ -2,7 +2,7 @@
 	<view>
 		
 		<view class="">
-			<view class="backBtn" @click="pre()">
+			<view class="backBtn"@click="Router.navigateTo({route:{path:'/pages/staffUser-goOut/staffUser-goOut'}})">
 				<image src="../../static/images/arrowL.png" mode=""></image>
 			</view>
 			<view class="mapBox">

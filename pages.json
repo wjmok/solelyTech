@@ -191,13 +191,6 @@
 			}
 		},
 		{
-			"path": "pages/staffUser-systemDetail/staffUser-systemDetail",
-			"style": {
-				"navigationBarTitleText": "公司规定",
-				"onReachBottomDistance":100
-			}
-		},
-		{
 			"path": "pages/staffUser-leave/staffUser-leave",
 			"style": {
 				"navigationBarTitleText": "请假",
