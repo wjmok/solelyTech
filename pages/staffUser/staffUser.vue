@@ -2,9 +2,9 @@
 	<view>
 		<view class="userHead pr">
 			<view class="headbj"><image src="../../static/images/about-img.png" mode=""></image></view>
-			<view class="quitBtn" @click="loginOff">退出</view>
+			<view class="quitBtn" style="font-size: 25rpx;font-weight: bold;" @click="loginOff">退出</view>
 			
-			<view class="quitBtn" style="left:30rpx;width: 50%;" @click="Utils.stopMultiClick(scan)" v-if="routineData.length<2">{{routineData.length>0?'签退':'签到'}}</view>
+			<view class="quitBtn" style="border: 1px solid #777777;border-radius: 30rpx;width: 50px;line-height: 25px;text-align: center;left:25rpx;" @click="Utils.stopMultiClick(scan)" v-if="routineData.length<2">{{routineData.length>0?'签退':'签到'}}</view>
 			<view class="infor flexColumn">
 				<view class="photo">
 					<image :src="mainData.mainImg&&mainData.mainImg[0]?mainData.mainImg[0].url:''" mode=""></image>

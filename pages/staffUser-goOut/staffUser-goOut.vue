@@ -13,7 +13,7 @@
 				</view>
 				<view class="arriveBtn fs16 ftw" v-if="item.start_time>0&&item.arrive_time==0" :data-id="item.id" @click="Router.navigateTo({route:{path:'/pages/staffUser-goOut-Arrive/staffUser-goOut-Arrive?id='+$event.currentTarget.dataset.id}})">到达</view>
 				<view class="arriveBtn fs16 ftw" v-if="item.arrive_time>0&&item.back_time==0" @click="getLocation('back',index)">返程</view>
-				<view class="arriveBtn fs16 ftw" v-if="item.back_time>0" @click="getLocation('end',index)">结束</view>
+				<view class="arriveBtn fs16 ftw" v-if="item.back_time>0&&item.type!=3" @click="getLocation('end',index)">结束</view>
 			</view>
 			
 		</view>

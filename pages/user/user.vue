@@ -33,7 +33,7 @@
 					<view>我的留言</view>
 				</view>
 			</view>
-			<view class="item flexCenter" @click="Router.navigateTo({route:{path:'/pages/staffLogin/staffLogin'}})">
+			<view class="item flexCenter" @click="login()">
 				<view>
 					<view class="icon"><image src="../../static/images/about-icon3.png" mode=""></image></view>
 					<view>员工登录</view>
@@ -111,6 +111,19 @@
 			    };
 				self.$apis.userInfoGet(postData, callback);
 			},
+			login(){
+				const self = this;
+				if (uni.getStorageSync('staff_token')&&uni.getStorageSync('staff_info').user_type==1) {
+					uni.navigateTo({
+						url: '/pages/staffUser/staffUser'
+					})
+				}else{
+					
+					uni.navigateTo({
+						url: '/pages/staffLogin/staffLogin'
+					})
+				}
+			}
 			
 		},
 		
