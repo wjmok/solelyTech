@@ -3,14 +3,15 @@
 		
 		<view class="pdlr4">
 			<view class="newsList fs14 flexRowBetween pdt15">
-				<view class="item" v-for="(item,index) in newsData" :key="index" @click="Router.navigateTo({route:{path:'/pages/newsDetail/newsDetail'}})">
-					<view class="pic"><image src="../../static/images/informationl-img.png" mode=""></image></view>
-					<view class="tit">APP开发须知</view>
+				<view class="item" v-for="(item,index) in mainData" :key="index" :data-id = "item.id"
+				@click="Router.navigateTo({route:{path:'/pages/newsDetail/newsDetail?id='+$event.currentTarget.dataset.id}})">
+					<view class="pic"><image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image></view>
+					<view class="tit">{{item.title}}</view>
 				</view>
 			</view>
 			
 			<!-- 无数据 -->
-			<view class="nodata"><image src="../../static/images/nodata.png" mode=""></image></view>
+			<view class="nodata" v-if="mainData.length==0"><image src="../../static/images/nodata.png" mode=""></image></view>
 		</view>
 		
 		
@@ -51,25 +52,67 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false,
-				newsData:[{},{},{},{},{},{},{},{}],
-				
+				mainData:[],
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);	
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
-			getMainData() {
+			
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						pagesize: 10,
+						is_page: true,
+					}
+				};
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.getBefore = {
+					article:{
+						tableName:'Label',
+						middleKey:'menu_id',
+						key:'id',
+						searchItem:{
+							title: ['in', ['企业动态']],
+						},
+						condition:'in'
+					}
+				};
+				postData.searchItem = {
+					thirdapp_id: 22,
+				};
+				postData.order = {
+					listorder: 'desc'
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+					}
+					self.$Utils.finishFunc('getMainData');
+			
+				};
+				self.$apis.articleGet(postData, callback);
+			},
 		}
 	};
 </script>

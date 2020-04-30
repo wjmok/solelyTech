@@ -158,8 +158,7 @@
 			"path": "pages/staffUser-goOut-Arrive/staffUser-goOut-Arrive",
 			"style": {
 				"navigationBarTitleText": "",//到达
-				"onReachBottomDistance":100,
-				"navigationStyle":"custom"
+				"onReachBottomDistance":100
 			}
 		},
 		{

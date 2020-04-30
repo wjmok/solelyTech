@@ -16,7 +16,7 @@
 				</view>
 			</view>
 			<view class="half rr">
-				<view class="item flex">
+				<view class="item flex" @click="intoMap">
 					<view class="icon"><image src="../../static/images/home-icon1.png" mode=""></image></view>
 					<view>
 						<view class="tit"  style="color: #5cdfdd;">一键导航</view>
@@ -103,23 +103,52 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false
+				
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
-			getMainData() {
-				const self = this;
-				console.log('852369')
-				const postData = {};
+			
+			getMainData(){
+			    var self = this;
+			    var postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+			    postData.searchItem = {
+					thirdapp_id:2
+				};
+			    var callback = function(res){
+			        if(res.info.data.length>0&&res.info.data[0]){
+						self.mainData  = res.info.data[0];
+			        };    
+					self.$Utils.finishFunc('getMainData');
+			    };
+				self.$apis.userInfoGet(postData, callback);
+			},
+			
+			intoMap(){
+			  const self = this;
+			  wx.getLocation({
+			    type: 'wgs84', //返回可以用于wx.openLocation的经纬度
+			    success: function (res) {  //因为这里得到的是你当前位置的经纬度
+			      var latitude = res.latitude
+			      var longitude = res.longitude
+			      wx.openLocation({        //所以这里会显示你当前的位置
+			        longitude: 108.8939050000,
+			        latitude: 34.2377310000,
+			        //109.045249,34.325841
+			        name: "西安纯粹信息科技有限公司",
+			        address:"西安纯粹信息科技有限公司",
+			        scale: 28
+			      })
+			    }
+			  })
+			},
+			
 		}
 	};
 </script>

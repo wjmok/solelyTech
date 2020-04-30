@@ -2,9 +2,9 @@
 	<view>
 		
 		<view class="xqInfor fs13  pdlr4 whiteBj">
-			<view>1、公司规章制度是公司用于规范公司全体成员及公司所有经济活动的标准和规定，它是公司内部经济责任制的具体化</view>
-			<view>2、公司规章制度大致可分为公司基本制度、公司工作制度和公司责任制度。公司规章制度的制定，应体现公司经济活动的特点和要求。</view>
-			<view>3、公司规章制度的制定要以《劳动法》为具体依据，不能出现违背相关法律条款。</view>
+			<view class="content ql-editor" style="padding:0;"
+			v-html="mainData.content">
+			</view>
 		</view>
 		
 	</view>
@@ -15,18 +15,42 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{}
+				mainData:{},
+				id:''
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.id = options.id;
+			
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
-
-		},
+			
+			getMainData(){
+			    var self = this;
+			    var postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+			    postData.searchItem = {
+					id:self.id,
+					thirdapp_id:22,
+				};
+			    var callback = function(res){
+			        if(res.info.data.length>0&&res.info.data[0]){
+						self.mainData  =res.info.data[0];
+						uni.setNavigationBarTitle({
+							title:self.mainData.title
+						});
+						const regex = new RegExp('<img', 'gi');
+						self.mainData.content = self.mainData.content.replace(regex, `<img style="max-width: 100%;"`);
+			        };    
+					self.$Utils.finishFunc('getMainData');
+			    };
+				self.$apis.articleGet(postData, callback);
+			},
+		}
 	};
 </script>
 

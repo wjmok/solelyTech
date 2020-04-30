@@ -2,13 +2,16 @@
 	<view>
 		
 		<view class="leaveList mglr4  fs13">
-			<view class="item flexRowBetween" v-for="(item,index) in leaveData"  @click="Router.navigateTo({route:{path:'/pages/staffUser-leaveDetail/staffUser-leaveDetail'}})">
-				<view class="infor">
-					<view>申请时间：2020-04-15</view>
-					<view class="mgt10">请假事由：朋友结婚</view>
+			<view class="item flexRowBetween" v-for="(item,index) in mainData"  :data-id="item.id"
+			@click="Router.navigateTo({route:{path:'/pages/staffUser-leaveDetail/staffUser-leaveDetail?id='+$event.currentTarget.dataset.id}})">
+				<view class="infor" style="width: 75%">
+					<view>申请时间：{{item.create_time}}</view>
+					<view class="mgt10">请假事由：{{item.content}}</view>
 				</view>
-				<view class="rr fs12">
-					<view class="pubColor mgb5 flexEnd">状态：人事审核</view>
+				<view class="rr fs12" style="width:25%">
+					<view class="pubColor mgb5 flexEnd" v-if="item.num==0">状态：审核中</view>
+					<view class="pubColor mgb5 flexEnd" v-if="item.num==1">状态：已审核</view>
+					<view class="pubColor mgb5 flexEnd" v-if="item.num==2">状态：已拒绝</view>
 					<view class="flexEnd"><image class="arrowR" src="../../static/images/0-icon.png" mode=""></image></view>
 				</view>
 			</view>
@@ -23,24 +26,54 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				leaveData:3
+				mainData:[],
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);	
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
 			
-			getMainData() {
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						pagesize: 10,
+						is_page: true,
+					}
+				};
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.tokenFuncName = 'getStaffToken';
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id: 22,
+					type:4
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+					}
+					self.$Utils.finishFunc('getMainData');
+			
+				};
+				self.$apis.routineGet(postData, callback);
+			},
 		}
 	};
 </script>

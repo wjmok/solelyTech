@@ -3,9 +3,9 @@
 		
 		<view class="editLine pdlr4">
 			<view class="item flexRowBetween">
-				<view class="ll"><span class="red mgr5">*</span>您的姓名</view>
+				<view class="ll">请假事由</view>
 				<view class="rr">
-					<textarea class="f5bj" value="人事架构看如果国家开发的理解就过了几个放大了科技股份看到两个" placeholder="" disabled placeholder-class="placeholder" />
+					<textarea class="f5bj" v-model="mainData.content" placeholder="" disabled placeholder-class="placeholder" />
 				</view>
 			</view>
 			<view class="item flexRowBetween">
@@ -13,7 +13,7 @@
 				<view class="rr flex">
 					<!-- <picker @change="seltResult" :value="index" :range="array"> -->
 						<view class="seltStyle flexRowBetween">
-							<view class="">事假</view>
+							<view class="">{{mainData.behavior}}</view>
 							<!-- <view style="width: 20rpx;height: 14rpx;"><image src="../../static/images/leave-icon.png" mode=""></image></view> -->
 						</view>
 					<!-- </picker> -->
@@ -23,10 +23,10 @@
 				<view class="ll">起止时间</view>
 				<view class="rr">
 					<view class="seltTime">
-						<view class="input">2020-04-15 09:00</view>
+						<view class="input">{{Utils.timeto(mainData.start_time,'ymd-hms')}}</view>
 					</view>
 					<view class="seltTime mgt15">
-						<view class="input">2020-04-15 18:30</view>
+						<view class="input">{{Utils.timeto(mainData.end_time,'ymd-hms')}}</view>
 					</view>
 				</view>
 			</view>
@@ -41,29 +41,39 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false,
-				array: ['','病假','事假','婚假'],
-				index: 0
+				Utils:this.$Utils,
+				array: ['事假','病假','年假','其他'],
+				mainData:{}
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.id = options.id;
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
-			seltResult(e) {
-				console.log('picker发送选择改变，携带值为', e.target.value)
-				this.index = e.target.value
-			},
+			
+			
 			getMainData() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.tokenFuncName = 'getStaffToken';
+				postData.searchItem = {
+					thirdapp_id: 22,
+					type:4,
+					id:self.id
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData = res.info.data[0];
+						self.mainData.behavior = self.array[self.mainData.behavior];
+					}
+					self.$Utils.finishFunc('getMainData');
+				};
+				self.$apis.routineGet(postData, callback);
+			},
 		}
 	};
 </script>

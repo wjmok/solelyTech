@@ -2,12 +2,12 @@
 	<view>
 		
 		<view class=" mglr4 pdtb15">
-			<textarea value="" placeholder="输入留言" placeholder-class="placeholder" />
+			<textarea v-model="submitData.content" placeholder="输入留言" placeholder-class="placeholder" />
 		</view>
 		<view class="f5H10"></view>
 		
 		<view class="submitbtn" style="padding: 150rpx 0 60rpx 0;">
-			<view class="btn">提交</view>
+			<button class="btn" open-type="getUserInfo" @getuserinfo="Utils.stopMultiClick(submit)">提交</button>
 		</view>
 		
 	</view>
@@ -18,23 +18,70 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false
+				Utils:this.$Utils,
+				submitData:{
+					content:'',
+					type:2
+				}
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			//self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
-			getMainData() {
+			
+			messageAdd() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.searchItem = {
+					user_no:uni.getStorageSync('user_info').user_no
+				};
+				postData.data = {};
+				postData.data = self.$Utils.cloneForm(self.submitData);
+				const callback = (data) => {				
+					if (data.solely_code == 100000) {					
+						self.$Utils.showToast('留言成功', 'none', 1000)
+						setTimeout(function() {
+							uni.navigateBack({
+								delta:1
+							})
+						}, 1000);
+						
+					} else {
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast(data.msg, 'none', 1000)
+					}	
+				};
+				self.$apis.messageAdd(postData, callback);
+			},
+			
+
+
+			
+			submit() {
+				const self = this;
+				
+				uni.setStorageSync('canClick', false);
+				const pass = self.$Utils.checkComplete(self.submitData);
+				console.log('pass', pass);
+				console.log('self.submitData',self.submitData)
+				
+				if (pass) {	
+					const callback = (user, res) => {
+						console.log(res)
+						self.messageAdd();
+					};
+					self.$Utils.getAuthSetting(callback);
+				
+				} else {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请输入留言内容', 'none')
+				};
+			},
 		}
 	};
 </script>

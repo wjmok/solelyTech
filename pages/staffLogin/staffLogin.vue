@@ -1,9 +1,9 @@
 <template>
-	<view>
+	<view v-if="showAll">
 		
 		<view class="flexColumn" style="padding-top: 100rpx;padding-bottom: 80rpx;">
-			<view class="photo"><image src="../../static/images/the-loginl-img.png" mode=""></image></view>
-			<view class="fs15 ftw mgt10">米桃子</view>
+			<view class="photo" style="overflow: hidden"><open-data type="userAvatarUrl"></open-data></view>
+			<view class="fs15 ftw mgt10"><open-data type="userNickName"></open-data></view>
 		</view>
 		<!-- <view class="loginBj pr">
 			<image src="../../static/images/the-login-img.png" mode=""></image>
@@ -13,18 +13,18 @@
 			<view class="item flex mgb20">
 				<view class="icon"><image src="../../static/images/the-loginl-icon.png" mode=""></image></view>
 				<view class="input">
-					<input type="text" value="" placeholder="Secitong" placeholder-class="placeholder">
+					<input type="text" v-model="submitData.login_name" placeholder="请输入登录名" placeholder-class="placeholder">
 				</view>
 			</view>
 			<view class="item flex mgb20">
 				<view class="icon"><image src="../../static/images/the-loginl-icon1.png" mode=""></image></view>
 				<view class="input">
-					<input type="password" value="" placeholder="请输入您的密码" placeholder-class="placeholder">
+					<input type="password" v-model="submitData.password" placeholder="请输入您的密码" placeholder-class="placeholder">
 				</view>
 			</view>
 			
 			<view class="item submitbtn" style="padding:200rpx 0 0 0;border: 0;" >
-				<button class="Wbtn" type="submint" @click="Router.navigateTo({route:{path:'/pages/staffUser/staffUser'}})">登录</button>
+				<button class="Wbtn" type="submint" @click="submit">登录</button>
 			</view>
 		</view>
 		
@@ -39,24 +39,55 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{}
+				submitData:{
+					login_name:'',
+					password:''
+				},
+				showAll:false
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			if (uni.getStorageSync('staff_token')&&uni.getStorageSync('staff_info').user_type==1) {
+				uni.redirectTo({
+					url: '/pages/staffUser/staffUser'
+				})
+			}else{
+				self.showAll = true
+			}
 		},
+		
 		methods: {
 			
-			getMainData() {
+			submit() {
 				const self = this;
-				console.log('852369')
-				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
-		}
+			
+				const postData = {
+					login_name: self.submitData.login_name,
+					password:self.submitData.password
+				};
+				if (self.$Utils.checkComplete(self.submitData)) {
+					
+					const callback = (res) => {
+						if (res.solely_code == 100000) {
+							console.log(res);
+							uni.setStorageSync('staff_token', res.token);
+							uni.setStorageSync('staff_info', res.info);
+							uni.redirectTo({
+								url: '/pages/staffUser/staffUser'
+							}) 
+						} else {
+							self.$Utils.showToast(res.msg,'none')
+						}
+					}
+					self.$apis.login(postData, callback);
+				} else {
+					self.$Utils.showToast('请补全登录信息', 'none')
+				};
+			},
+			
+		},
 	};
 </script>
 

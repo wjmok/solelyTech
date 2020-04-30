@@ -30,8 +30,12 @@ export default {
 			title: '加载中',
 			mask: true
 		});
+		var url = config.baseUrl + obj.url;
+		if(obj.data.url){
+			url = obj.data.url
+		};
 		uni.request({
-			url: config.baseUrl + obj.url, //仅为示例，并非真实接口地址。
+			url: url, //仅为示例，并非真实接口地址。
 			data: obj.data,		
 			method:obj.type,
 			header:custom_header,

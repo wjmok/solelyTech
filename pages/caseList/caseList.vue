@@ -3,18 +3,22 @@
 		
 		<view class="pdlr4">
 			<view class="flex menuTit pdtb20 fs13" @click="categoryShow()">
-				<image src="../../static/images/casel-icon.png" style="width: 36rpx;height: 30rpx;margin-right: 10rpx;" mode=""></image>小程序
+				<image src="../../static/images/casel-icon.png" style="width: 36rpx;height: 30rpx;margin-right: 10rpx;" mode=""></image>
+				{{labelData[curr-1].title}}-{{titleTwo}}
 			</view>
 			
 			<view class="black-bj" style="top: 0rpx;" v-show="is_show"></view>
 			<view class="categoryBox" v-show="is_categoryShow">
 				<view class="pdt20 fs14 ftw">类型</view>
 				<view class="typeNav flex fs13 pdt10 borderB1">
-					<view class="tt" :class="typeCurr==index?'on':''" @click="typeChange(index)" v-for="(item,index) in typeData" :key="index">{{item}}</view>
+					<view class="tt" :class="curr==1+index?'on':''"  @click="currChange(index+1)" v-for="(item,index) in typeData" :key="index">{{item}}</view>
 				</view>
 				<view class="pdt20 fs14 ftw">行业</view>
 				<view class="industryNav flex fs13 pdt5 color6">
-					<view class="tt" :class="industryCurr==index?'on':''" @click="industryChange(index)" v-for="(item,index) in industryData" :key="index">{{item}}</view>
+					<view  class="tt" :class="idTwo==-1?'on':''"
+					@click="classChange(-1,'全部')">全部</view>
+					<view class="tt" :class="idTwo==item.id?'on':''" @click="classChange(item.id,item.title)" 
+					v-for="(item,index) in labelTwoData" :key="index">{{item.title}}</view>
 				</view>
 				
 				<view class="pdtb25 flexCenter">
@@ -23,14 +27,15 @@
 			</view>
 			
 			<view class="flexRowBetween caseList">
-				<view class="item radius10 pr boxShaow" v-for="(item,index) in caseData" :key="index" @click="Router.navigateTo({route:{path:'/pages/caseDetail/caseDetail'}})">
-					<view class="pic"><image src="../../static/images/casel-img1.png" mode=""></image></view>
-					<view class="tit fs13">酒便利APP</view>
+				<view class="item radius10 pr boxShaow" v-for="(item,index) in mainData" :key="index"  :data-url="item.passage1"
+				@click="Router.navigateTo({route:{path:'/pages/caseDetail/caseDetail?url='+$event.currentTarget.dataset.url}})">
+					<view class="pic"><image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image></view>
+					<view class="tit fs13">{{item.title}}</view>
 				</view>
 			</view>
 			
 			<!-- 无数据 -->
-			<view class="nodata"><image src="../../static/images/nodata.png" mode=""></image></view>
+			<view class="nodata" v-if="mainData.length==0"><image src="../../static/images/nodata.png" mode=""></image></view>
 		</view>
 		
 		
@@ -72,43 +77,140 @@
 			return {
 				Router:this.$Router,
 				is_show: false,
-				wx_info:{},
-				is_show:false,
 				is_categoryShow:false,
 				typeCurr:0,
-				typeData:['小程序','APP','公众号','网站','粮油','生鲜','蛋类'],
+				typeData:['小程序','APP','公众号','网站'],
 				industryCurr:0,
 				industryData:['餐饮','履行','商场','服装','旅游','母婴','社交','餐饮','履行','商场','服装','旅游','母婴','社交'],
 				caseData:[{},{},{},{}],
-				
+				id:-1,
+				idTwo:-1,
+				labelData:[],
+				labelTwoData:[],
+				mainData:[],
+				curr:1,
+				titleTwo:''
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getLabelData'], self);	
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
+			
+			getLabelData() {
+				var self = this;
+				var postData = {};
+				postData.url = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Label/get';
+				postData.searchItem = {
+					type: 1,
+					thirdapp_id: 2,
+					parentid:7
+				};
+				postData.order = {
+					listorder:'desc'
+				}
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.labelData.push.apply(self.labelData, res.info.data);
+						
+						self.id = self.labelData[0].id;
+						self.getLabelTwoData()
+					}
+				};
+				self.$apis.labelGet(postData, callback);
+			},
+			
+			getLabelTwoData() {
+				var self = this;
+				var postData = {};
+				postData.url = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Label/get';
+				postData.searchItem = {
+					type: 1,
+					thirdapp_id: 2,
+					parentid:self.id
+				};
+				postData.order = {
+					listorder:'desc'
+				}
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.labelTwoData.push.apply(self.labelTwoData, res.info.data);
+						self.idArray = [];
+						for (var i = 0; i < self.labelTwoData.length; i++) {
+							self.idArray.push(self.labelTwoData[i].id)
+						}
+						self.idTwo = -1;
+						self.titleTwo = '全部';
+						self.getMainData()
+					}
+				};
+				self.$apis.labelGet(postData, callback);
+			},
+			
+			
+			getMainData() {
+				const self = this;
+				const postData = {};
+				postData.url = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Article/get';
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id:2,
+					menu_id:self.idTwo
+				};
+				if(self.idTwo==-1){
+					postData.searchItem.menu_id = ['in',self.idArray]
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData,res.info.data);
+					};
+					self.$Utils.finishFunc('getLabelData');
+				};
+				self.$apis.articleGet(postData, callback);
+			},
+			
 			categoryShow(){
 				const self = this;
 				self.is_show = !self.is_show;
 				self.is_categoryShow = !self.is_categoryShow;
-				
 			},
-			typeChange(index){
+			
+			currChange(curr){
 				const self = this;
-				self.typeCurr = index
+				if(curr!=self.curr){
+					self.curr = curr;
+					self.id = self.labelData[self.curr-1].id;
+					self.labelTwoData = [];
+					self.mainData = [];
+					self.getLabelTwoData()
+					self.categoryShow()
+				}
 			},
-			industryChange(index){
+			
+			classChange(id,title){
 				const self = this;
-				self.industryCurr = index
+				if(id!=self.idTwo){
+					self.titleTwo = title; 
+					self.idTwo = id;
+					self.mainData = [];
+					self.getMainData();
+					self.categoryShow()
+				}
 			},
-			getMainData() {
-				const self = this;
-				console.log('852369')
-				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+			
 		}
 	};
 </script>

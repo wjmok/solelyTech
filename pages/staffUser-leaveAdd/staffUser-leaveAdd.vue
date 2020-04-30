@@ -1,15 +1,15 @@
 <template>
 	<view>
-		
+
 		<view class="editLine pdlr4">
 			<view class="item flexRowBetween">
-				<view class="ll"><span class="red mgr5">*</span>您的姓名</view>
+				<view class="ll"><span class="red mgr5">*</span>请假事由</view>
 				<view class="rr">
-					<textarea class="f5bj" value="" placeholder="" placeholder-class="placeholder" />
-				</view>
+					<textarea class="f5bj" v-model="submitData.content" placeholder="请填写" placeholder-class="placeholder" />
+					</view>
 			</view>
 			<view class="item flexRowBetween">
-				<view class="ll">请假类型</view>
+				<view class="ll"><span class="red mgr5">*</span>请假类型</view>
 				<view class="rr flex">
 					<picker @change="seltResult" :value="index" :range="array">
 						<view class="seltStyle flexRowBetween">
@@ -21,29 +21,45 @@
 				</view>
 			</view>
 			<view class="item flexRowBetween">
-				<view class="ll">起止时间</view>
+				<view class="ll"><span class="red mgr5">*</span>起止时间</view>
 				<view class="rr flexRowBetween" style="flex-wrap: wrap;">
 					<view class="seltTime">
 						<view class="flexRowBetween">
-							<view></view>
+							<view>
+								<picker mode="date"  @change="changeStartDate">
+									<view>{{startDate!=''?startDate:'请选择'}}</view>
+								</picker>
+							</view>
 							<view class="arrowB"><image src="../../static/images/leave-icon.png" mode=""></image></view>
 						</view>
 					</view>
 					<view class="seltTime">
 						<view class="flexRowBetween">
-							<view></view>
+							<view>
+								<picker mode="time"  @change="changeStartTime">
+									<view>{{startTime!=''?startTime:'请选择'}}</view>
+								</picker>
+							</view>
 							<view class="arrowB"><image src="../../static/images/leave-icon.png" mode=""></image></view>
 						</view>
 					</view>
 					<view class="seltTime">
 						<view class="flexRowBetween">
-							<view></view>
+							<view>
+								<picker mode="date"  @change="changeEndDate">
+									<view>{{endDate!=''?endDate:'请选择'}}</view>
+								</picker>
+							</view>
 							<view class="arrowB"><image src="../../static/images/leave-icon.png" mode=""></image></view>
 						</view>
 					</view>
 					<view class="seltTime">
 						<view class="flexRowBetween">
-							<view></view>
+							<view>
+								<picker mode="time"  @change="changeEndTime">
+									<view>{{endTime!=''?endTime:'请选择'}}</view>
+								</picker>
+							</view>
 							<view class="arrowB"><image src="../../static/images/leave-icon.png" mode=""></image></view>
 						</view>
 					</view>
@@ -52,7 +68,7 @@
 		</view>
 		
 		<view class="submitbtn" style="padding-top: 200rpx;">
-			<view class="btn">提交</view>
+			<view class="btn" @click="Utils.stopMultiClick(submit)">提交</view>
 		</view>
 		
 	</view>
@@ -64,30 +80,105 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false,
-				array: ['','病假','事假','婚假'],
-				index: 0
+				Utils:this.$Utils,
+				array: ['事假','病假','年假','其他'],
+				index: 0,
+				submitData:{
+					type:4,
+					content:'',
+					start_time:'',
+					end_time:''
+				},
+				startDate:'',
+				startTime:'',
+				endDate:'',
+				endTime:''
 			}
 		},
+		
 		onLoad() {
 			const self = this;
 			// self.$Utils.loadAll(['getMainData'], self);
 		},
 		
 		methods: {
+			
+			
+			changeStartDate(e){
+			    const self = this;
+			    self.startDate = e.detail.value;
+			},
+			
+			changeStartTime(e) {
+			    const self = this;
+			    if(self.startDate){
+					self.startTime = e.detail.value;
+			        self.submitData.start_time = self.$Utils.timeToTimestamp(self.startDate+' '+e.detail.value)*1000;
+				}else{
+					self.$Utils.showToast('请选择起始日期','none',1000)
+				};
+			},
+			
+			changeEndDate(e){
+			    const self = this;
+				console.log(e)
+			    self.endDate = e.detail.value;
+			},
+			
+			changeEndTime(e) {
+			    const self = this;
+			    if(self.endDate){
+					self.endTime = e.detail.value;
+			        self.submitData.end_time = self.$Utils.timeToTimestamp(self.endDate+' '+e.detail.value)*1000;
+				}else{
+					self.$Utils.showToast('请选择起始日期','none',1000)
+				};
+			},
+			
 			seltResult(e) {
 				console.log('picker发送选择改变，携带值为', e.target.value)
 				this.index = e.target.value
 			},
-			getMainData() {
+			
+			routineAdd() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.tokenFuncName = 'getStaffToken';
+				postData.searchItem = {
+					user_no:uni.getStorageSync('user_info').user_no
+				};
+				postData.data = {};
+				postData.data = self.$Utils.cloneForm(self.submitData);
+				postData.data.behavior = self.index;
+				const callback = (data) => {				
+					if (data.solely_code == 100000) {					
+						self.$Utils.showToast('申请成功', 'none', 1000)
+						setTimeout(function() {
+							uni.navigateBack({
+								delta:1
+							})
+						}, 1000);
+					} else {
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast(data.msg, 'none', 1000)
+					}	
+				};
+				self.$apis.routineAdd(postData, callback);
+			},
+			
+			submit() {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				const pass = self.$Utils.checkComplete(self.submitData);
+				console.log('pass', pass);
+				console.log('self.submitData',self.submitData)
+				if (pass) {	
+					self.routineAdd();
+				} else {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请输入留言内容', 'none')
+				};
+			},
 		}
 	};
 </script>

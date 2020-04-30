@@ -5,7 +5,7 @@
 				<view class="flex">
 					<image class="icon" src="../../static/images/contact-usl-icon.png" mode=""></image>
 				</view>
-				<view class="text">联系电话：<span class="pubColor mgl5">15689522562</span></view>
+				<view class="text" @click="call()">联系电话：<span class="pubColor mgl5">15689522562</span></view>
 			</view>
 			<view class="TopItem flex">
 				<view class="flex">
@@ -38,12 +38,19 @@
 				wx_info:{}
 			}
 		},
+		
 		onLoad() {
 			const self = this;
 			//self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
-
+			
+			call(){
+				uni.makePhoneCall({
+					phoneNumber:'15689522562'
+				});
+			},
 
 		},
 	};

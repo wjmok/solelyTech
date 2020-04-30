@@ -1,5 +1,5 @@
 import assetsConfig from "@/config/assets.config.js";
-
+import token from '@/common/token.js';
 export default {
 	
 	
@@ -40,6 +40,79 @@ export default {
 			onBridgeReady(param);
 		}
 	
+	},
+	
+	getAuthSetting(callback) {
+		wx.getSetting({
+			success: setting => {
+				if (!setting.authSetting['scope.userInfo']) {
+					wx.hideLoading();
+					uni.setStorageSync('canClick', true);
+					this.showToast('授权请点击同意', 'none');
+				} else {
+					uni.getUserInfo({
+						provider: 'weixin',
+						success: function(infoRes) {
+							console.log('-------获取微信用户所有-----');
+							console.log(JSON.stringify(infoRes.userInfo));
+							callback && callback(infoRes.userInfo, setting);
+						}
+					});
+	
+					/* wx.getUserInfo({
+						success: function(user) {
+							
+						}
+					}); */
+				};
+			}
+		});
+	},
+	
+	uploadFile(filePath, name, formData, callback) {
+		var that = this;
+		const c_callback = (res) => {
+			that.uploadFile(filePath, name, formData, callback);
+		};
+		console.log('uploadFile', formData)
+		if (formData.tokenFuncName) {
+			if (formData.refreshTokn) {
+				token[formData.tokenFuncName](c_callback, {
+					refreshToken: true
+				});
+			} else {
+				formData.token = token[formData.tokenFuncName](c_callback);
+			};
+			if (!formData.token) {
+				return;
+			};
+		};
+		wx.uploadFile({
+			url: 'https://www.solelycloud.com/apinew/public/index.php/api/v1/Base/FtpFile/upload',
+			filePath: filePath,
+			name: name,
+			formData: formData,
+			success: function(res) {
+				if (res.data) {
+					res.data = JSON.parse(res.data);
+				};
+				if (res.data.solely_code == '200000') {
+					token[formData.tokenFuncName](c_callback, {
+						refreshToken: true
+					});
+				} else {
+					callback && callback(res.data);
+				};
+			},
+			fail: function(err) {
+				wx.showToast({
+					title: '网络故障',
+					icon: 'fail',
+					duration: 2000,
+					mask: true,
+				});
+			}
+		})
 	},
 	
 	getHashParameters() {
@@ -673,11 +746,23 @@ export default {
 		
 		var month = date.getMonth() + 1;
 		var strDate = date.getDate();
+		var hour = date.getHours();
+		var min = date.getMinutes();
+		var sec = date.getSeconds();
 		if (month >= 1 && month <= 9) {
 			month = "0" + month;
 		}
 		if (strDate >= 0 && strDate <= 9) {
 			strDate = "0" + strDate;
+		}
+		if (hour >= 0 && hour <= 9) {
+			hour = "0" + hour;
+		}
+		if (min >= 0 && min <= 9) {
+			min = "0" + min;
+		}
+		if (sec >= 0 && sec <= 9) {
+			sec = "0" + sec;
 		}
 		if (type == "ym") {
 			// 转年月
@@ -688,11 +773,11 @@ export default {
 		} else if (type == "ymd-hms") {
 			//转年月日 时分秒
 			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				" " + date.getHours() + seperator2 + date.getMinutes() +
-				seperator2 + date.getSeconds();
+				" " + hour + seperator2 + min +
+				seperator2 + sec;
 		} else if (type == "hms") {
 			//转时分秒
-			var currentdate = date.getHours() + seperator2 + date.getMinutes() + seperator2 + date.getSeconds();
+			var currentdate = hour + seperator2 + min + seperator2 + sec;
 		}
 		return currentdate;
 	}

@@ -17,6 +17,8 @@ export default {
 		};
 		http.HTTP(allParams);
 	},
+	
+	
 
 	registerSuper(param, callback) {
 
@@ -127,6 +129,45 @@ export default {
 	SkuDateGet(param, callback) {
 		var allParams = {
 			url: 'Common/SkuDate/get',
+			type: 'post',
+			noToken: true,
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	resumeAdd(param, callback) {
+		var allParams = {
+			url: 'Common/Resume/add',
+			type: 'post',
+			noToken: true,
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	messageAdd(param, callback) {
+		var allParams = {
+			url: 'Common/Message/add',
+			type: 'post',
+			noToken: true,
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	projectGet(param, callback) {
+		var allParams = {
+			url: 'Common/Project/get',
 			type: 'post',
 			noToken: true,
 			data: param,
@@ -302,7 +343,55 @@ export default {
 		};
 		http.HTTP(allParams);
 	},
-
+	
+	routineGet(param, callback) {
+		var allParams = {
+			url: 'Common/Routine/get',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	routineAdd(param, callback) {
+		var allParams = {
+			url: 'Common/Routine/add',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	routineUpdate(param, callback) {
+		var allParams = {
+			url: 'Common/Routine/update',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	salaryFlowGet(param, callback) {
+		var allParams = {
+			url: 'Common/SalaryFlow/get',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
 
 	login(param, callback) {
 

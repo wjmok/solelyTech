@@ -4,9 +4,12 @@
 			<view class="headbj"><image src="../../static/images/about-img.png" mode=""></image></view>
 			<view class="infor flexColumn">
 				<view class="photo">
-					<image src="../../static/images/about-img1.png" mode=""></image>
+					<view style="width: 100%;height: 100%;border-radius: 50%;box-sizing: border-box;border: 1px solid #fff;">
+						<view  style="overflow: hidden;border-radius: 50%;width: 100%;height: 100%;"><open-data type="userAvatarUrl"></open-data></view>
+					</view>
+					<!-- <image src="../../static/images/about-img1.png" mode=""></image> -->
 				</view>
-				<view class="fs13 mgt10">风飞扬</view>
+				<view class="fs13 mgt10"><open-data type="userNickName"></open-data></view>
 			</view>
 		</view>
 		
@@ -18,7 +21,7 @@
 				</view>
 				
 			</view>
-			<view class="item flexCenter" @click="Router.navigateTo({route:{path:'/pages/user-case/user-case'}})">
+			<view class="item flexCenter" @click="Router.navigateTo({route:{path:'/pages/user-caseGl/user-caseGl'}})">
 				<view>
 					<view class="icon"><image src="../../static/images/about-icon1.png" mode=""></image></view>
 					<view>项目管理</view>
@@ -82,18 +85,35 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{}
+				mainData:{}
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
-
+			
+			getMainData(){
+			    var self = this;
+			    var postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+			    postData.searchItem = {
+					thirdapp_id:2
+				};
+			    var callback = function(res){
+			        if(res.info.data.length>0&&res.info.data[0]){
+						self.mainData  = res.info.data[0];
+			        };    
+					self.$Utils.finishFunc('getMainData');
+			    };
+				self.$apis.userInfoGet(postData, callback);
+			},
+			
 		},
+		
 	};
 </script>
 

@@ -2,17 +2,19 @@
 	<view>
 		<view class="userHead pr">
 			<view class="headbj"><image src="../../static/images/about-img.png" mode=""></image></view>
-			<view class="quitBtn" @click="Router.redirectTo({route:{path:'/pages/user/user'}})">退出</view>
+			<view class="quitBtn" @click="loginOff">退出</view>
+			
+			<view class="quitBtn" style="left:30rpx;width: 50%;" @click="Utils.stopMultiClick(scan)" v-if="routineData.length<2">{{routineData.length>0?'签退':'签到'}}</view>
 			<view class="infor flexColumn">
 				<view class="photo">
-					<image src="../../static/images/about-img1.png" mode=""></image>
+					<image :src="mainData.mainImg&&mainData.mainImg[0]?mainData.mainImg[0].url:''" mode=""></image>
 				</view>
-				<view class="fs13 mgt10">风飞扬</view>
+				<view class="fs13 mgt10">{{mainData.name}}</view>
 			</view>
 		</view>
 		
 		<view class="twoBox flex fs13 color3">
-			<view class="item flexCenter" @click="Router.navigateTo({route:{path:'/pages/staffUser-resume/staffUser-resume'}})">
+			<view class="item flexCenter" @click="showToast">
 				<view>
 					<view class="icon"><image src="../../static/images/employeesl-icon.png" mode=""></image></view>
 					<view>简历管理</view>
@@ -24,13 +26,13 @@
 					<view>外出登记</view>
 				</view>
 			</view>
-			<view class="item flexCenter" @click="Router.navigateTo({route:{path:'/pages/user-case/user-case'}})">
+			<view class="item flexCenter" @click="showToast">
 				<view>
 					<view class="icon"><image src="../../static/images/employeesl-icon2.png" mode=""></image></view>
 					<view>项目管理</view>
 				</view>
 			</view>
-			<view class="item flexCenter" @click="Router.navigateTo({route:{path:'/pages/staffUser-Extension/staffUser-Extension'}})">
+			<view class="item flexCenter" @click="showToast">
 				<view>
 					<view class="icon"><image src="../../static/images/employeesl-icon3.png" mode=""></image></view>
 					<view>推广客户</view>
@@ -64,17 +66,117 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{}
+				Utils:this.$Utils,
+				mainData:{},
+				routineData:[]
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData','getRoutineData'], self);
 		},
+		
 		methods: {
-
+			
+			
+			getRoutineData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getStaffToken';
+				postData.searchItem = {
+					thirdapp_id: 22,
+					type:2,
+					create_time:['between',[new Date(new Date().toLocaleDateString()).getTime()/1000,new Date(new Date().toLocaleDateString()).getTime()/1000+86400]]
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.routineData = res.info.data
+					}
+					self.$Utils.finishFunc('getRoutineData');
+				};
+				self.$apis.routineGet(postData, callback);
+			},
+			
+			getLocation(){
+				const self = this;
+				uni.getLocation({
+				    type: 'wgs84',
+				    success: function (res) {
+						self.latitude = res.latitude;
+						self.longitude = res.longitude;
+						self.routineAdd()
+				    }
+				});
+				self.$Utils.finishFunc('getLocation');
+			},
+			
+			
+			routineAdd() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getStaffToken';
+				postData.check_token = uni.getStorageSync('user_token');
+				postData.latitude = self.latitude;
+				postData.longitude = self.longitude;
+				postData.check =  self.code 
+				postData.data = {
+					type:2
+				};
+				const callback = (data) => {				
+					if (data.solely_code == 100000) {	
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast('操作成功', 'none', 1000)
+						self.getRoutineData()
+					} else {
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast(data.msg, 'none', 1000)
+					}	
+				};
+				self.$apis.routineAdd(postData, callback);
+			},
+			
+			
+			showToast(){
+				const self = this;
+				self.$Utils.showToast('功能开发中~','none')
+			},
+			
+			getMainData(){
+			    var self = this;
+			    var postData = {};
+				postData.tokenFuncName = 'getStaffToken';
+			    postData.searchItem = {
+					thirdapp_id:22
+				};
+			    var callback = function(res){
+			        if(res.info.data.length>0&&res.info.data[0]){
+						self.mainData  = res.info.data[0];
+			        };    
+					self.$Utils.finishFunc('getMainData');
+			    };
+				self.$apis.userInfoGet(postData, callback);
+			},
+			
+			loginOff(){
+				const self = this;
+				uni.removeStorageSync('staff_info');
+				uni.removeStorageSync('staff_token');
+				self.Router.redirectTo({route:{path:'/pages/staffUser/staffUser'}})
+			},
+			
+			scan(){
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				uni.scanCode({
+				    success: function (res) {
+				        console.log('条码类型：' + res.scanType);
+				        console.log('条码内容：' + res.result);
+						self.code =  res.result;
+						self.getLocation()
+				    }
+				});
+			},
 		},
 	};
 </script>

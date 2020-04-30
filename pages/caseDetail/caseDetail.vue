@@ -1,10 +1,6 @@
 <template>
 	<view>
-		
-		<view class="caseDetail" >
-			<image src="../../static/images/casel-img1.png" mode="widthFix"></image>
-		</view>
-		
+		<web-view  :src="url"></web-view>
 	</view>
 </template>
 
@@ -13,23 +9,16 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false
+				url:''
 			}
 		},
-		onLoad() {
+		onLoad(options) {
 			const self = this;
+			self.url = options.url;
 			// self.$Utils.loadAll(['getMainData'], self);
 		},
 		methods: {
-			getMainData() {
-				const self = this;
-				console.log('852369')
-				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+			
 		}
 	};
 </script>
