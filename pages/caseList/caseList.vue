@@ -26,9 +26,15 @@
 				</view>
 			</view>
 			
-			<view class="flexRowBetween caseList">
+			<!-- <view class="flexRowBetween caseList">
 				<view class="item radius10 pr boxShaow" v-for="(item,index) in mainData" :key="index"  :data-url="item.passage1"
 				@click="Router.navigateTo({route:{path:'/pages/caseDetail/caseDetail?url='+$event.currentTarget.dataset.url}})">
+					<view class="pic"><image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image></view>
+					<view class="tit fs13">{{item.title}}</view>
+				</view>
+			</view> -->
+			<view class="flexRowBetween caseList">
+				<view class="item radius10 pr boxShaow" v-for="(item,index) in mainData" :key="index"  :data-url="item.passage1">
 					<view class="pic"><image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image></view>
 					<view class="tit fs13">{{item.title}}</view>
 				</view>
@@ -96,7 +102,9 @@
 		onLoad(options) {
 			const self = this;
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['getLabelData'], self);	
+			self.paginate.pagesize = 6;
+			
+			self.$Utils.loadAll(['getMainData'], self);	
 		},
 		
 		onReachBottom() {
@@ -113,7 +121,7 @@
 			getLabelData() {
 				var self = this;
 				var postData = {};
-				postData.url = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Label/get';
+				postData.getUrl = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Label/get';
 				postData.searchItem = {
 					type: 1,
 					thirdapp_id: 2,
@@ -127,16 +135,17 @@
 						self.labelData.push.apply(self.labelData, res.info.data);
 						
 						self.id = self.labelData[0].id;
+						self.$Utils.finishFunc('getLabelData');
 						self.getLabelTwoData()
 					}
 				};
-				self.$apis.labelGet(postData, callback);
+				self.$apis.urlGet(postData, callback);
 			},
 			
 			getLabelTwoData() {
 				var self = this;
 				var postData = {};
-				postData.url = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Label/get';
+				postData.getUrl = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Label/get';
 				postData.searchItem = {
 					type: 1,
 					thirdapp_id: 2,
@@ -154,32 +163,35 @@
 						}
 						self.idTwo = -1;
 						self.titleTwo = '全部';
-						self.getMainData()
+						//self.getMainData()
 					}
+					
 				};
-				self.$apis.labelGet(postData, callback);
+				self.$apis.urlGet(postData, callback);
 			},
 			
 			
 			getMainData() {
 				const self = this;
+				self.getLabelData();
 				const postData = {};
-				postData.url = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Article/get';
+				postData.getUrl = 'http://www.solelytech.com/api/public/index.php/api/v1/Common/Article/get';
 				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				
 				postData.searchItem = {
 					thirdapp_id:2,
 					menu_id:self.idTwo
 				};
 				if(self.idTwo==-1){
-					postData.searchItem.menu_id = ['in',self.idArray]
+					postData.searchItem.menu_id =  ['in',[28, 29, 30, 31, 32, 33, 34, 35, 36]];	
 				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
 						self.mainData.push.apply(self.mainData,res.info.data);
 					};
-					self.$Utils.finishFunc('getLabelData');
+					self.$Utils.finishFunc('getMainData');
 				};
-				self.$apis.articleGet(postData, callback);
+				self.$apis.urlGet(postData, callback);
 			},
 			
 			categoryShow(){

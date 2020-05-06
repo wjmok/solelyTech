@@ -32,6 +32,20 @@ export default {
 		};
 		http.HTTP(allParams);
 	},
+	
+	urlGet(param, callback) {
+
+		var allParams = {
+			url: 'Project/Solely/urlGet',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+
 
 
 	bindShop(param, callback) {
